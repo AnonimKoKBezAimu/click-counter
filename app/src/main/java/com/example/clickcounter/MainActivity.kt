@@ -1,5 +1,7 @@
 package com.example.clickcounter
 
+import android.R.attr.onClick
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.clickcounter.CounterBox
 import com.example.clickcounter.ui.theme.ClickCounterTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,20 +41,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             Column()
             {
-                var counter = remember {
+                var counter by remember {
                     mutableStateOf(0)
                 }
 
                 Box(modifier = Modifier
+                    .weight(0.2f)
                     .fillMaxSize()
-                    .weight(1f),
+                )
+
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(3f),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
                         modifier = Modifier
                             .background(Color.DarkGray)
-                            .fillMaxHeight(0.5f)
-                            .fillMaxWidth(0.9f)
+                            .fillMaxHeight(0.8f)
+                            .fillMaxWidth(0.8f)
                             .border(5.dp, color = Color.LightGray)
                     ) {
                         Row (
@@ -59,7 +67,7 @@ class MainActivity : ComponentActivity() {
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "You clicked ${counter.value} times",
+                            Text(text = "You clicked ${counter} times",
                                 color = Color.White,
                                 fontSize = 35.sp,
                                 textAlign = TextAlign.Center,
@@ -71,14 +79,32 @@ class MainActivity : ComponentActivity() {
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .weight(1f),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.BottomCenter
+                ){
+                    ResetCounterBox(
+                        Modifier
+                            .fillMaxWidth(0.7f)
+                            .fillMaxHeight()
+                    ) {
+                        counter = 0
+                    }
+                }
+
+                Box(modifier = Modifier
+                    .weight(0.4f)
+                    .fillMaxSize()
+                )
+
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(3f),
+                    contentAlignment = Alignment.TopCenter
                 ) {
                     CounterBox(
                         Modifier
-                            .fillMaxSize(0.5f)
-                    ) { newCount ->
-                        counter.value = newCount
-
+                            .fillMaxSize(0.7f)
+                    ) {
+                        counter++
                     }
                 }
             }
@@ -89,29 +115,57 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CounterBox(
     modifier: Modifier = Modifier,
-    updateCounter: (Int) -> Unit
-){
-    var localCounter by remember { mutableStateOf(0) }
-
-    Box(modifier = Modifier
-        .fillMaxWidth(0.65f)
-        .fillMaxHeight(0.5f)
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+        .fillMaxWidth(0.75f)
+        .fillMaxHeight(0.7f)
         .background(color = Color.Red)
         .border(5.dp, Color.LightGray)
-        .clickable(onClick = {
-            localCounter+=1
-            updateCounter(localCounter)
-        }
+        .clickable(onClick = {onClick()}
         )
-    ){
-        Row(modifier = Modifier
-            .fillMaxSize(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Click here to +1",
+            Text(
+                "Click here to +1",
                 color = Color.White,
                 fontSize = 35.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun ResetCounterBox(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+        .fillMaxWidth(0.75f)
+        .fillMaxHeight(0.6f)
+        .background(color = Color.Blue)
+        .border(5.dp, Color.LightGray)
+        .clickable(onClick = {onClick()}
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Reset",
+                color = Color.White,
+                fontSize = 35.sp,
+                textAlign = TextAlign.Center
             )
         }
     }
